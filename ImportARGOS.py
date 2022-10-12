@@ -9,3 +9,7 @@
 ## Created: Fall 2022
 ## Author: kelsey.husted@duke.edu (for ENV859)
 ##---------------------------------------------------------------------
+#%% Import Packages
+
+import arcpy, sys, os
+

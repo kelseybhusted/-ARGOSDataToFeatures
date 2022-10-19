@@ -22,7 +22,7 @@ outputFC = "V:/ARGOSTracking/Scratch/ARGOStrack.shp"
 
 #Create feature class to which we will add feature
 outPath, outFile = os.path.split(outputFC)
-outputSR = arcpy.SpatialReference(53002)
+outputSR = arcpy.SpatialReference(54002)
 arcpy.management.CreateFeatureclass(outPath, outFile, "POINT", "", "", "", outputSR)
 
 

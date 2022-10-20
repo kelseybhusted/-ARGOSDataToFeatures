@@ -26,9 +26,13 @@ outputSR = arcpy.SpatialReference(54002)
 arcpy.management.CreateFeatureclass(outPath, outFile, "POINT", "", "", "", outputSR)
 
 # Add TagID, LC, IQ, and Date fields to the output feature class
+#Adding columns
 arcpy.management.AddField(outputFC,"TagID","LONG")
 arcpy.management.AddField(outputFC,"LC","TEXT")
 arcpy.management.AddField(outputFC,"Date","DATE")
+
+# Create the insert cursor
+cur = arcpy.da.InsertCursor(outputFC,['Shape@','TagID','LC','Date'])
 
 #%% Construct a while loop and iterate through all lines in the data file
 # Open the ARGOS data file
@@ -84,13 +88,25 @@ while lineString:
             obsPoint = arcpy.Point()
             obsPoint.X = obsLon
             obsPoint.Y = obsLat
+            
+        
+            # Convert the point to a point geometry object with spatial reference
+            inputSR = arcpy.SpatialReference(4326)
+            obsPointGeom = arcpy.PointGeometry(obsPoint,inputSR)
+            
+            # Create a feature object
+            feature = cur.insertRow((obsPointGeom,tagID,obsLC,obsDate.replace(".","/") + " " + obsTime))
     
     #Handle any error
         except Exception as e:
             print(f"Error adding record {tagID} to the output: {e}")
-        
+            
+
     # Move to the next line so the while loop progresses
     lineString = inputFileObj.readline()
     
 #Close the file object
 inputFileObj.close()
+
+#Delete the cursor object
+del cur
